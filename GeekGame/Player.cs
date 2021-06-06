@@ -8,26 +8,28 @@ using System.Threading.Tasks;
 
 namespace GeekGame
 {
-    class Player : SomeOne
+    class Player : BaseObjectClass
     {
-        static Image imgPlayer = Resources.UnitPolo;
-        public Player(Point pos, Point dir) : base(pos, dir) { }
-
+        static Image imgUnit = Resources.UnitPolo;
+        public Player(Point pos, Point dir, Size size) : base(pos, dir, size) { }
         public override void Draw()
         {
-            Game.Buffer.Graphics.DrawImage(imgPlayer, Pos);
+            Game.Buffer.Graphics.DrawImage(new Bitmap(imgUnit, new Size(Sizes.Width, Sizes.Height)), Pos.X, Pos.Y);
         }
-
         public override void Update()
         {
             Pos.X = Pos.X + Dir.X;
             Pos.Y = Pos.Y + Dir.Y;
 
             if (Pos.X < 20) Dir.X = -Dir.X;
-            if (Pos.X > Game.Width - 70) Dir.X = -Dir.X;
+            if (Pos.X > Game.Width - 58) Dir.X = -Dir.X;
 
             if (Pos.Y < 17) Dir.Y = -Dir.Y;
-            if (Pos.Y > Game.Height - 60) Dir.Y = -Dir.Y;
+            if (Pos.Y > Game.Height - 52) Dir.Y = -Dir.Y;
+        }
+        public override void Clash()
+        {
+            Dir = new Point(-Dir.X, Dir.Y);
         }
     }
 }

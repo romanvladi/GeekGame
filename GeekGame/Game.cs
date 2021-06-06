@@ -14,8 +14,9 @@ namespace GeekGame
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
 
-        static Ball[] _balls;
-        static Player[] _team1;
+        static BaseObjectClass ball;
+        static List<BaseObjectClass> _team1;
+        static int countPlayer = 6;
 
         static Image imgField = Resources.football_field_1;
         static Point pointField = new Point(0,0);
@@ -38,23 +39,18 @@ namespace GeekGame
             Timer timer = new Timer();
             timer.Interval = 30;
             timer.Tick += Timer_Tick;
-            timer.Start();
+            timer.Start();            
         }
 
         public static void Load()
         {
-            _balls = new Ball[4];
+            ball = new Ball(new Point(30, Height/2), new Point(3, -3), new Size(30, 30));
 
-            for (int i = 0; i < _balls.Length; i++)
+            _team1 = new List<BaseObjectClass>(countPlayer);
+
+            for (int i = 0; i < countPlayer; i++)
             {
-                _balls[i] = new Ball(new Point(21, i*5+21), new Point(i + 1, -i - 1));
-            }
-
-            _team1 = new Player[4];
-
-            for (int i = 0; i < _team1.Length; i++)
-            {
-                _team1[i] = new Player(new Point(100, i * 5 + 100), new Point(i + 1, -i - 1));
+                _team1.Add(new Player(new Point(30, i * 5 + 30), new Point(i + 1, -i - 1), new Size(40, 36)));
             }
         }
 
@@ -70,12 +66,9 @@ namespace GeekGame
 
             Buffer.Graphics.DrawImage(imgField, pointField);
 
-            foreach (var ball in _balls)
-            {
-                ball.Draw();
-            }
+            ball.Draw();
 
-            foreach (var unit in _team1)
+            foreach (BaseObjectClass unit in _team1)
             {
                 unit.Draw();
             }
@@ -85,15 +78,16 @@ namespace GeekGame
 
         public static void Update()
         {
-            foreach (var ball in _balls)
+            ball.Update();
+            for (int i = 0; i < _team1.Count; i++)
             {
-                ball.Update();
-            }
-
-            foreach (var unit in _team1)
-            {
-                unit.Update();
-            }
+                _team1[i].Update();
+                if (_team1[i].Collision(ball))
+                {
+                    _team1.RemoveAt(i);
+                    ball.Clash();
+                }
+            }            
         }       
     }
 }

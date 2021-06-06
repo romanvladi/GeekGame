@@ -46,13 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BaseObjectClass.cs" />
+    <Compile Include="ICollision.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="SomeOne.cs" />
     <Compile Include="Ball.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Program.cs" />
@@ -86,6 +87,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\UnitPolo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\football-field-2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
