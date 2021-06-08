@@ -8,10 +8,10 @@ using System.Threading.Tasks;
 
 namespace GeekGame
 {
-    class Player : BaseObjectClass
+    class Unit : BaseObjectClass
     {
         static Image imgUnit = Resources.UnitPolo;
-        public Player(Point pos, Point dir, Size size) : base(pos, dir, size) { }
+        public Unit(Point pos, Point dir, Size size) : base(pos, dir, size) { }
         public override void Draw()
         {
             Game.Buffer.Graphics.DrawImage(new Bitmap(imgUnit, new Size(Sizes.Width, Sizes.Height)), Pos.X, Pos.Y);

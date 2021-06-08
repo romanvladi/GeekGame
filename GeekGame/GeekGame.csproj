@@ -49,7 +49,7 @@
     <Compile Include="BaseObjectClass.cs" />
     <Compile Include="Foot.cs" />
     <Compile Include="ICollision.cs" />
-    <Compile Include="Player.cs" />
+    <Compile Include="Unit.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

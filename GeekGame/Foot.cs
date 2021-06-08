@@ -11,26 +11,37 @@ namespace GeekGame
     class Foot : BaseObjectClass
     {
         static Image imgFoot = Resources.foot;
+
+        public event EventHandler FootDie;
+        public event EventHandler<FootDieEventArgs> FootDieExtended;
+
         public Foot(Point pos, Point dir, Size size) : base(pos, dir, size) { }
         public override void Draw()
         {
             Game.Buffer.Graphics.DrawImage(new Bitmap(imgFoot, new Size(Sizes.Width, Sizes.Height)), Pos.X, Pos.Y);
         }
+        public override void Clash()
+        {
+            if (FootDie != null)
+            {
+                FootDie.Invoke(this, new EventArgs());
+            }
+            if (FootDieExtended != null)
+            {
+                FootDieExtended.Invoke(this, new FootDieEventArgs());
+            }
+        }
         public void Up()
         {
-            if (Pos.Y > 0) Pos.Y = Pos.Y - Dir.Y;
+            if (Pos.Y > 20) Pos.Y = Pos.Y - Dir.Y;
         }
         public void Down()
         {
-            if (Pos.Y < Game.Height) Pos.Y = Pos.Y + Dir.Y;
+            if (Pos.Y < Game.Height-70) Pos.Y = Pos.Y + Dir.Y;
         }
-        public void Left()
-        {
-            if (Pos.X > 0) Pos.X = Pos.X - Dir.X;
-        }
-        public void Right()
-        {
-            if (Pos.X < Game.Width) Pos.X = Pos.X + Dir.X;
-        }
+    }
+    class FootDieEventArgs : EventArgs
+    {
+        public FootDieEventArgs() { }
     }
 }

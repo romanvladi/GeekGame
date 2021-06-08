@@ -22,6 +22,8 @@ namespace GeekGame
         static Image imgField = Resources.football_field_1;
         static Point pointField = new Point(0,0);
 
+        static Timer timer;
+
 
         public static int Width { get; set; }
         public static int Height { get; set; }
@@ -37,12 +39,32 @@ namespace GeekGame
 
             Load();
 
-            Timer timer = new Timer();
+            timer = new Timer();
             timer.Interval = 30;
-            timer.Tick += Timer_Tick;
             timer.Start();
+            timer.Tick += Timer_Tick;
 
             form.KeyDown += OnKeyDown;
+        }
+
+       
+        public static void Load()
+        {
+            _foot = new Foot(new Point(Width-75, Height/2), new Point(10, 10), new Size(50, 50));
+            _foot.FootDieExtended += OnFootDieExtended;
+
+            _team1 = new List<BaseObjectClass>(countPlayer);
+
+            for (int i = 0; i < countPlayer; i++)
+            {
+                _team1.Add(new Unit(new Point(30, i * 5 + 30), new Point(i + 1, -i - 1), new Size(40, 36)));
+            }
+        }
+
+        private static void Timer_Tick(object sender, EventArgs e)
+        {
+            Draw();
+            Update();
         }
 
         private static void OnKeyDown(object sender, KeyEventArgs e)
@@ -53,31 +75,15 @@ namespace GeekGame
             if (e.KeyCode == Keys.Down)
                 _foot.Down();
 
-            if (e.KeyCode == Keys.Left)
-                _foot.Left();
-
-            if (e.KeyCode == Keys.Right)
-                _foot.Right();
+            if (e.KeyCode == Keys.Space)
+                _ball = new Ball(new Point(_foot.Rect.X, _foot.Rect.Y + 10), new Point(-10, 0), new Size(30, 30));
         }
 
-        public static void Load()
+        private static void OnFootDieExtended(object sender, FootDieEventArgs e)
         {
-            _ball = new Ball(new Point(30, Height/2), new Point(3, -3), new Size(30, 30));
-
-            _foot = new Foot(new Point(25, Height / 2), new Point(10, 10), new Size(50, 50));
-
-            _team1 = new List<BaseObjectClass>(countPlayer);
-
-            for (int i = 0; i < countPlayer; i++)
-            {
-                _team1.Add(new Player(new Point(30, i * 5 + 30), new Point(i + 1, -i - 1), new Size(40, 36)));
-            }
-        }
-
-        private static void Timer_Tick(object sender, EventArgs e)
-        {
-            Draw();
-            Update();
+            timer.Stop();
+            Buffer.Graphics.DrawString("Game Over!", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Underline), Brushes.White, 100, 50);
+            Buffer.Render();
         }
 
         public static void Draw()
@@ -86,30 +92,43 @@ namespace GeekGame
 
             Buffer.Graphics.DrawImage(imgField, pointField);
 
-            _ball.Draw();
+            _foot.Draw();
 
             foreach (BaseObjectClass unit in _team1)
             {
                 unit.Draw();
             }
 
-            _foot.Draw();
+            if (_ball != null)
+                _ball.Draw();
+
 
             Buffer.Render();
         }
 
         public static void Update()
         {
-            _ball.Update();
             for (int i = 0; i < _team1.Count; i++)
             {
                 _team1[i].Update();
-                if (_team1[i].Collision(_ball))
+
+                if (_ball != null && _ball.Collision(_team1[i]))
+                {
+                    _team1[i].Clash();
+                    _ball = null;
+                    continue;
+                }
+                //------------------------------------------
+                if (_foot.Collision(_team1[i]))
                 {
                     _team1.RemoveAt(i);
-                    _ball.Clash();
+                    _foot.Clash();
                 }
-            }            
+                //-----------------------------------------
+            }
+
+            if (_ball != null)
+                _ball.Update();
         }       
     }
 }
