@@ -47,6 +47,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BaseObjectClass.cs" />
+    <Compile Include="Foot.cs" />
     <Compile Include="ICollision.cs" />
     <Compile Include="Player.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -90,6 +91,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\football-field-2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\foot.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

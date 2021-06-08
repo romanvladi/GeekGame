@@ -14,7 +14,8 @@ namespace GeekGame
         private static BufferedGraphicsContext _context;
         public static BufferedGraphics Buffer;
 
-        static BaseObjectClass ball;
+        static BaseObjectClass _ball;
+        static Foot _foot;
         static List<BaseObjectClass> _team1;
         static int countPlayer = 6;
 
@@ -39,12 +40,31 @@ namespace GeekGame
             Timer timer = new Timer();
             timer.Interval = 30;
             timer.Tick += Timer_Tick;
-            timer.Start();            
+            timer.Start();
+
+            form.KeyDown += OnKeyDown;
+        }
+
+        private static void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Up)
+                _foot.Up();
+
+            if (e.KeyCode == Keys.Down)
+                _foot.Down();
+
+            if (e.KeyCode == Keys.Left)
+                _foot.Left();
+
+            if (e.KeyCode == Keys.Right)
+                _foot.Right();
         }
 
         public static void Load()
         {
-            ball = new Ball(new Point(30, Height/2), new Point(3, -3), new Size(30, 30));
+            _ball = new Ball(new Point(30, Height/2), new Point(3, -3), new Size(30, 30));
+
+            _foot = new Foot(new Point(25, Height / 2), new Point(10, 10), new Size(50, 50));
 
             _team1 = new List<BaseObjectClass>(countPlayer);
 
@@ -66,26 +86,28 @@ namespace GeekGame
 
             Buffer.Graphics.DrawImage(imgField, pointField);
 
-            ball.Draw();
+            _ball.Draw();
 
             foreach (BaseObjectClass unit in _team1)
             {
                 unit.Draw();
             }
 
+            _foot.Draw();
+
             Buffer.Render();
         }
 
         public static void Update()
         {
-            ball.Update();
+            _ball.Update();
             for (int i = 0; i < _team1.Count; i++)
             {
                 _team1[i].Update();
-                if (_team1[i].Collision(ball))
+                if (_team1[i].Collision(_ball))
                 {
                     _team1.RemoveAt(i);
-                    ball.Clash();
+                    _ball.Clash();
                 }
             }            
         }       

@@ -31,5 +31,6 @@ namespace GeekGame
         {
             Dir = new Point(-Dir.X, Dir.Y);
         }
+        
     }
 }

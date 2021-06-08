@@ -22,7 +22,7 @@ namespace GeekGame
             Sizes = size;
         }
         public abstract void Draw();
-        public abstract void Update();
+        public virtual void Update() { }
         public virtual void Clash() { }
         public bool Collision(BaseObjectClass obj)
         {

@@ -83,6 +83,16 @@ namespace GeekGame.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap foot {
+            get {
+                object obj = ResourceManager.GetObject("foot", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap football_field_1 {
             get {
                 object obj = ResourceManager.GetObject("football_field_1", resourceCulture);
