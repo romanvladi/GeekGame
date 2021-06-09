@@ -49,6 +49,10 @@
     <Compile Include="BaseObjectClass.cs" />
     <Compile Include="Foot.cs" />
     <Compile Include="ICollision.cs" />
+    <Compile Include="Scenes\BaseScene.cs" />
+    <Compile Include="Scenes\IScene.cs" />
+    <Compile Include="Scenes\MenuScene.cs" />
+    <Compile Include="Scenes\SceneManager.cs" />
     <Compile Include="Unit.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -90,10 +94,10 @@
     <None Include="Resources\UnitPolo.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\football-field-2.png" />
+    <None Include="Resources\foot.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\foot.png" />
+    <None Include="Resources\stMenu.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

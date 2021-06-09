@@ -1,4 +1,5 @@
 ﻿using GeekGame.Properties;
+using GeekGame.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -9,33 +10,26 @@ using System.Windows.Forms;
 
 namespace GeekGame
 {
-    class Game
+    class Game : BaseScene
     {
-        private static BufferedGraphicsContext _context;
-        public static BufferedGraphics Buffer;
+        private Ball _ball;
+        private Foot _foot;
+        private List<BaseObjectClass> _team1;
+        private int _countPlayer = 4;
 
-        static BaseObjectClass _ball;
-        static Foot _foot;
-        static List<BaseObjectClass> _team1;
-        static int countPlayer = 6;
+        readonly Image _imgField = Resources.football_field_1;
+        private Point _pointField = new Point(0, 0);
 
-        static Image imgField = Resources.football_field_1;
-        static Point pointField = new Point(0,0);
+        private Timer timer;
+        readonly Rectangle _rect = new Rectangle( 20, 200, 2, 110 );
+        private int _goals = 0;
+        private int _countBalls = 10;
 
-        static Timer timer;
+        public event EventHandler GameOver;
 
-
-        public static int Width { get; set; }
-        public static int Height { get; set; }
-
-        public static void Init(Form form)
+        public override void Init(Form form)
         {
-            _context = BufferedGraphicsManager.Current;
-            Graphics g = form.CreateGraphics();
-
-            Width = form.ClientSize.Width;
-            Height = form.ClientSize.Height;
-            Buffer = _context.Allocate(g, new Rectangle(0, 0, Width, Height));
+            base.Init(form);
 
             Load();
 
@@ -44,30 +38,36 @@ namespace GeekGame
             timer.Start();
             timer.Tick += Timer_Tick;
 
-            form.KeyDown += OnKeyDown;
+            this.GameOver += Game_GameOver;
         }
 
-       
-        public static void Load()
+        private void Game_GameOver(object sender, EventArgs e)
+        {
+            timer.Stop();
+            Buffer.Graphics.DrawString("Game Over", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Bold), Brushes.White, 100, 50);
+            Buffer.Graphics.DrawString("<Backspace> - в меню", new Font(FontFamily.GenericSansSerif, 40, FontStyle.Underline), Brushes.White, 40, 400);
+            Buffer.Render();
+        }
+
+        public void Load()
         {
             _foot = new Foot(new Point(Width-75, Height/2), new Point(10, 10), new Size(50, 50));
-            _foot.FootDieExtended += OnFootDieExtended;
 
-            _team1 = new List<BaseObjectClass>(countPlayer);
+            _team1 = new List<BaseObjectClass>(_countPlayer);
 
-            for (int i = 0; i < countPlayer; i++)
+            for (int i = 0; i < _countPlayer; i++)
             {
                 _team1.Add(new Unit(new Point(30, i * 5 + 30), new Point(i + 1, -i - 1), new Size(40, 36)));
             }
         }
 
-        private static void Timer_Tick(object sender, EventArgs e)
+        private void Timer_Tick(object sender, EventArgs e)
         {
             Draw();
             Update();
         }
 
-        private static void OnKeyDown(object sender, KeyEventArgs e)
+        public override void SceneKeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Up)
                 _foot.Up();
@@ -76,21 +76,33 @@ namespace GeekGame
                 _foot.Down();
 
             if (e.KeyCode == Keys.Space)
+            {
                 _ball = new Ball(new Point(_foot.Rect.X, _foot.Rect.Y + 10), new Point(-10, 0), new Size(30, 30));
+                _ball.Goal += Ball_Goal;
+                _countBalls -= 1;
+            }
+            if (e.KeyCode == Keys.Back)
+            {
+                SceneManager
+                    .Get()
+                    .Init<MenuScene>(_form)
+                    .Draw();
+            }
         }
 
-        private static void OnFootDieExtended(object sender, FootDieEventArgs e)
+        private static void Ball_Goal(object sender, GoalEventArgs e)
         {
-            timer.Stop();
-            Buffer.Graphics.DrawString("Game Over!", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Underline), Brushes.White, 100, 50);
+            Buffer.Graphics.DrawString("GOAL!", new Font(FontFamily.GenericSansSerif, 60, FontStyle.Bold), Brushes.White, 200, 100);
             Buffer.Render();
         }
 
-        public static void Draw()
+        public void Draw()
         {
             Buffer.Graphics.Clear(Color.DarkGreen);
 
-            Buffer.Graphics.DrawImage(imgField, pointField);
+            Buffer.Graphics.DrawImage(_imgField, _pointField);
+
+            Buffer.Graphics.DrawRectangle(new Pen(Color.Red), _rect);
 
             _foot.Draw();
 
@@ -102,11 +114,13 @@ namespace GeekGame
             if (_ball != null)
                 _ball.Draw();
 
+            Buffer.Graphics.DrawString($"Goals: {_goals}", SystemFonts.DefaultFont, Brushes.White, 20, 0, StringFormat.GenericTypographic);
+            Buffer.Graphics.DrawString($"BalLs: {_countBalls}", SystemFonts.DefaultFont, Brushes.White, Width-70, 0, StringFormat.GenericTypographic);
 
             Buffer.Render();
         }
 
-        public static void Update()
+        public void Update()
         {
             for (int i = 0; i < _team1.Count; i++)
             {
@@ -117,18 +131,29 @@ namespace GeekGame
                     _team1[i].Clash();
                     _ball = null;
                     continue;
-                }
-                //------------------------------------------
-                if (_foot.Collision(_team1[i]))
-                {
-                    _team1.RemoveAt(i);
-                    _foot.Clash();
-                }
-                //-----------------------------------------
+                }                                
             }
 
             if (_ball != null)
+            {
                 _ball.Update();
-        }       
+                if (_ball.Rect.IntersectsWith(_rect))
+                {
+                    _ball.Clash();
+                    _goals += 1;
+                }
+            }
+            if (_countBalls == -1)
+            {
+                GameOver.Invoke(null, new EventArgs());
+            }
+
+        }
+
+        public override void Dispose()
+        {
+            base.Dispose();
+            timer.Stop();
+        }
     }
 }

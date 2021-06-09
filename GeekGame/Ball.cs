@@ -11,7 +11,9 @@ namespace GeekGame
 {
     class Ball : BaseObjectClass
     {
-        static Image imgBall = Resources.BALL2BLACK;
+        readonly Image imgBall = Resources.BALL2BLACK;
+
+        public event EventHandler<GoalEventArgs> Goal;
 
         public Ball(Point pos, Point dir, Size size) : base(pos, dir, size) { }
 
@@ -29,12 +31,15 @@ namespace GeekGame
             if (Pos.X > Game.Width - 53) Dir.X = -Dir.X;
 
             if (Pos.Y < 17) Dir.Y = -Dir.Y;
-            if (Pos.Y > Game.Height - 50) Dir.Y = -Dir.Y;
+            if (Pos.Y > Game.Height - 50) Dir.Y = -Dir.Y;              
         }
         public override void Clash()
         {
-            Dir = new Point(-Dir.X, Dir.Y);
-        }
-        
+            if (Goal != null) Goal.Invoke(this, new GoalEventArgs());
+        }       
+    }
+    class GoalEventArgs : EventArgs
+    {
+        public GoalEventArgs() { }
     }
 }

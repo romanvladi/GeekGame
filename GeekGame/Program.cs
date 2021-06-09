@@ -1,4 +1,5 @@
 ﻿using GeekGame.Properties;
+using GeekGame.Scenes;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -19,17 +20,22 @@ namespace GeekGame
         static void Main()
         {
             var form = new Form();
-            form.MinimumSize = new System.Drawing.Size(656, 550);
-            form.MaximumSize = new System.Drawing.Size(656, 550);
-            form.MaximizeBox = false;
-            form.MinimizeBox = false;
-            form.Icon = Resources.F;
-            form.StartPosition = FormStartPosition.CenterScreen;
-            form.Text = "EVRO 2020";
+            {
+                form.MinimumSize = new System.Drawing.Size(656, 550);
+                form.MaximumSize = new System.Drawing.Size(656, 550);
+                form.MaximizeBox = false;
+                form.MinimizeBox = false;
+                form.Icon = Resources.F;
+                form.StartPosition = FormStartPosition.CenterScreen;
+                form.Text = "EVRO 2020";
+            }
+            form.Show();
 
-            Game.Init(form);
-            //form.Show();
-            //Game.Draw();
+            SceneManager
+                .Get()
+                .Init<MenuScene>(form)
+                .Draw();
+
             Application.Run(form);
         }
     }

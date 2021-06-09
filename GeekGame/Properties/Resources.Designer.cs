@@ -103,9 +103,9 @@ namespace GeekGame.Properties {
         /// <summary>
         ///   Поиск локализованного ресурса типа System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap football_field_2 {
+        internal static System.Drawing.Bitmap stMenu {
             get {
-                object obj = ResourceManager.GetObject("football_field_2", resourceCulture);
+                object obj = ResourceManager.GetObject("stMenu", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
